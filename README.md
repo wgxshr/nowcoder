@@ -256,3 +256,166 @@ public class Main {
     }
 }
 ```
+
+#### 5.进制转换
+
+###### 输入描述:
+
+```
+输入一个十六进制的数值字符串。
+```
+
+###### 输出描述:
+
+```
+输出该数值的十进制字符串。不同组的测试用例用\n隔开。
+```
+
+示例1
+
+###### 输入
+
+```
+0xA
+0xAA
+```
+
+###### 输出
+
+```
+10
+170
+```
+
+```
+import java.util.*;
+import java.io.*;
+ 
+public class Main{
+    public static void main(String[] args) throws IOException{
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        String input;
+        while((input = bf.readLine())!=null){
+            String temp = input.substring(2,input.length());
+            int sum = 0;
+            int length = temp.length();
+            for(int i= length-1;i>=0;i--){
+                char c = temp.charAt(i);
+                int tempNum = (int)c;
+                if(tempNum>=65){
+                    tempNum = tempNum - 65 + 10;
+                }else{
+                    tempNum = tempNum - 48;
+                }
+                sum = sum + (int) Math.pow(16, length-i-1)*tempNum;
+            }
+            System.out.println(sum);
+        }
+    }
+}
+```
+
+#### 6.合并表记录
+
+###### 输入描述:
+
+```
+先输入键值对的个数
+然后输入成对的index和value值，以空格隔开
+```
+
+###### 输出描述:
+
+```
+输出合并后的键值对（多行）
+```
+
+示例1
+
+###### 输入
+
+```
+4
+0 1
+0 2
+1 2
+3 4
+```
+
+###### 输出
+
+```
+0 3
+1 2
+3 4
+```
+```
+import java.util.*;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        sc.nextLine();
+        Map<Integer, Integer> map = new TreeMap<>();
+        for(int i = 0; i < N; ++i) {
+            String[] str = sc.nextLine().split(" ");
+            int key = Integer.parseInt(str[0]);
+            int val = Integer.parseInt(str[1]);
+            map.put(key, map.getOrDefault(key, 0) + val);
+        }
+        for(int key : map.keySet()) {
+            System.out.println(key + " " + map.get(key));
+        }
+    }
+}
+```
+
+#### 7.提取不重复的整数
+
+###### 输入描述:
+
+```
+输入一个int型整数
+```
+
+###### 输出描述:
+
+```
+按照从右向左的阅读顺序，返回一个不含重复数字的新的整数
+```
+
+示例1
+
+###### 输入
+
+```
+9876673
+```
+
+###### 输出
+
+```
+37689
+```
+```
+import java.util.*;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        long num = sc.nextLong();
+        long ans = 0;
+        Set<Long> set = new HashSet<>();
+        while(num != 0) {
+            long i = num % 10;
+            if(set.contains(i)) {
+                num /= 10;
+                continue;
+            }
+            set.add(i);
+            ans = ans * 10 + i;
+            num /= 10;
+        }
+        System.out.println(ans);
+    }
+}
+```
