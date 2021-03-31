@@ -1,5 +1,4 @@
 # nowcoder
-
 2022刷题总结
 
 ## 华为机试题
@@ -182,7 +181,6 @@ public class Main {
 第一组是3个数字，分别是：2，2，1。
 第二组是11个数字，分别是：10，20，40，32，67，40，20，89，300，400，15。  
 ```
-
 > 本题主要考察对scanner函数的熟练程度，题目要求结果有序且无重复，可以将每一个输入放到TreeSet中，读完输入后，直接顺序打印set即可
 
 ```
@@ -237,7 +235,6 @@ abc00000
 12345678
 90000000
 ```
-
 > 先将长度不能被8整除的字符串补”00000000“，然后当字符串长度大于8时，每次将字符串的前8个加入到结果中，然后取字符串从第九个字符开始的子串
 
 ```
@@ -352,7 +349,6 @@ public class Main{
 1 2
 3 4
 ```
-
 ```
 import java.util.*;
 public class Main {
@@ -401,7 +397,6 @@ public class Main {
 ```
 37689
 ```
-
 ```
 import java.util.*;
 public class Main {
@@ -442,7 +437,6 @@ public class Main {
 示例1
 
 ###### 输入
-
 ```
 abc
 ```
@@ -452,7 +446,6 @@ abc
 ```
 3
 ```
-
 ````
 import java.util.*;
 public class Main {
@@ -548,7 +541,6 @@ I am a boy
 ```
 boy a am I
 ```
-
 > 先使用trim取出字符串前后的字符串，遍历字符串，如果为空格，则将空格之前的子串加入到栈中，不为空格则将字符追加到子串后面，最后将栈中的字符串加入到结果中
 
 
@@ -688,7 +680,6 @@ public class Main {
 ```
 
 ## 剑指offer
-
 #### 栈的压入、弹出系列
 
 ###### 题目描述
@@ -1242,6 +1233,579 @@ public class Solution {
             k >>= 1;
         }
         return exponent < 0 ? 1 / ans : ans;
+    }
+}
+```
+
+#### 调整数组顺序使奇数位于偶数前面
+
+###### 题目描述
+
+输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有的奇数位于数组的前半部分，所有的偶数位于数组的后半部分，并保证奇数和奇数，偶数和偶数之间的相对位置不变。
+
+示例1
+
+###### 输入
+
+```
+[1,2,3,4]
+```
+
+###### 返回值
+
+```
+[1,3,2,4]
+```
+
+```
+import java.util.*;
+
+
+public class Solution {
+    /**
+     * 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
+     *
+     * 
+     * @param array int整型一维数组 
+     * @return int整型一维数组
+     */
+    public int[] reOrderArray (int[] array) {
+        // write code here
+        if(array == null || array.length < 2) {
+            return array;
+        }
+        int left = 0, right = 0;
+        while(right < array.length) {
+            if(array[right] % 2 != 0) {
+                for(int i = right; i > left; --i) {
+                    int tmp = array[i];
+                    array[i] = array[i - 1];
+                    array[i - 1] = tmp;
+                }
+                ++left;
+            }
+            ++right;
+        }
+        return array;
+    }
+}
+```
+
+#### 链表的倒数第k个节点
+
+###### 题目描述
+
+输入一个链表，输出该链表中倒数第k个结点。
+
+如果该链表长度小于k，请返回空。
+
+示例1
+
+###### 输入
+
+```
+{1,2,3,4,5},1 
+```
+
+###### 返回值
+
+```
+{5}
+```
+
+```
+import java.util.*;
+
+/*
+ * public class ListNode {
+ *   int val;
+ *   ListNode next = null;
+ *   public ListNode(int val) {
+ *     this.val = val;
+ *   }
+ * }
+ */
+
+public class Solution {
+    /**
+     * 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
+     *
+     * 
+     * @param pHead ListNode类 
+     * @param k int整型 
+     * @return ListNode类
+     */
+    public ListNode FindKthToTail (ListNode pHead, int k) {
+        // write code here
+        if(pHead == null) {
+            return pHead;
+        }
+        ListNode slow = pHead, fast = pHead;
+        while(fast != null) {
+            fast = fast.next;
+            if(k <= 0) {
+                slow = slow.next;
+            }
+            --k;
+        }
+        return k <= 0 ? slow : null;
+    }
+}
+```
+
+#### 反转链表
+
+###### 题目描述
+
+输入一个链表，反转链表后，输出新链表的表头。
+
+示例1
+
+###### 输入
+
+```
+{1,2,3}
+```
+
+###### 返回值
+
+```
+{3,2,1}
+```
+
+**递归解法**
+
+> /*
+> public class ListNode {
+>     int val;
+>     ListNode next = null;
+>
+>     ListNode(int val) {
+>         this.val = val;
+>     }
+> }*/
+> public class Solution {
+>     public ListNode ReverseList(ListNode head) {
+>         if(head == null || head.next == null) {
+>             return head;
+>         }
+>         ListNode newHead = ReverseList(head.next);
+>         head.next.next = head;
+>         head.next = null;
+>         return newHead;
+>     }
+> }
+
+**迭代解法**
+
+> /*
+> public class ListNode {
+>     int val;
+>     ListNode next = null;
+>
+>     ListNode(int val) {
+>         this.val = val;
+>     }
+> }*/
+> public class Solution {
+>     public ListNode ReverseList(ListNode head) {
+>         ListNode cur = head, pre = null, nxt = null;
+>         while(cur != null) {
+>             nxt = cur.next;
+>             cur.next = pre;
+>             pre = cur;
+>             cur = nxt;
+>         }
+>         return pre;
+>     }
+> }
+
+#### 合并两个排序的链表
+
+###### 题目描述
+
+输入两个单调递增的链表，输出两个链表合成后的链表，当然我们需要合成后的链表满足单调不减规则。
+
+示例1
+
+###### 输入
+
+```
+{1,3,5},{2,4,6}
+```
+
+###### 返回值
+
+```
+{1,2,3,4,5,6}
+```
+
+```
+/*
+public class ListNode {
+    int val;
+    ListNode next = null;
+
+    ListNode(int val) {
+        this.val = val;
+    }
+}*/
+public class Solution {
+    public ListNode Merge(ListNode list1,ListNode list2) {
+        if(list1 == null) {
+            return list2;
+        }
+        if(list2 == null) {
+            return list1;
+        }
+        ListNode cur1 = list1, cur2 = list2;
+        ListNode dummy = new ListNode(-1), cur = dummy;
+        while(cur1 != null && cur2 != null) {
+            if(cur1.val < cur2.val) {
+                cur.next = cur1;
+                cur1 = cur1.next;
+            } else {
+                cur.next = cur2;
+                cur2 = cur2.next;
+            }
+            cur = cur.next;
+        }
+        if(cur1 != null) {
+            cur.next = cur1;
+        } else {
+            cur.next = cur2;
+        }
+        return dummy.next;
+    }
+}
+```
+
+#### 树的子结构
+
+###### 题目描述
+
+输入两棵二叉树A，B，判断B是不是A的子结构。（ps：我们约定空树不是任意一个树的子结构）
+
+示例1
+
+###### 输入
+
+```
+{8,8,#,9,#,2,#,5},{8,9,#,2}
+```
+
+###### 返回值
+
+```
+true
+```
+
+```
+/**
+public class TreeNode {
+    int val = 0;
+    TreeNode left = null;
+    TreeNode right = null;
+
+    public TreeNode(int val) {
+        this.val = val;
+
+    }
+
+}
+*/
+public class Solution {
+    public boolean HasSubtree(TreeNode root1,TreeNode root2) {
+        if(root1 == null || root2 == null) {
+            return false;
+        }
+        return dfs(root1, root2)
+            || HasSubtree(root1.left, root2)
+            || HasSubtree(root1.right, root2);
+    }
+    
+    private boolean dfs(TreeNode root1, TreeNode root2) {
+        if(root2 == null) {
+            return true;
+        }
+        if(root1 == null) {
+            return false;
+        }
+        if(root1.val == root2.val) {
+            return dfs(root1.left, root2.left) 
+                && dfs(root1.right, root2.right);
+        } else {
+            return false;
+        }
+    }
+}
+```
+
+#### 二叉树的镜像
+
+###### 题目描述
+
+操作给定的二叉树，将其变换为源二叉树的镜像。
+
+```
+比如：    源二叉树 
+            8
+           /  \
+          6   10
+         / \  / \
+        5  7 9 11
+        镜像二叉树
+            8
+           /  \
+          10   6
+         / \  / \
+        11 9 7  5
+```
+
+示例1
+
+###### 输入
+
+```
+{8,6,10,5,7,9,11}
+```
+
+###### 返回值
+
+```
+{8,10,6,11,9,7,5}
+```
+
+```
+import java.util.*;
+
+/*
+ * public class TreeNode {
+ *   int val = 0;
+ *   TreeNode left = null;
+ *   TreeNode right = null;
+ *   public TreeNode(int val) {
+ *     this.val = val;
+ *   }
+ * }
+ */
+
+public class Solution {
+    /**
+     * 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
+     *
+     * 
+     * @param pRoot TreeNode类 
+     * @return TreeNode类
+     */
+    public TreeNode Mirror (TreeNode pRoot) {
+        // write code here
+        if(pRoot == null) {
+            return pRoot;
+        }
+        TreeNode node = pRoot.left;
+        pRoot.left = pRoot.right;
+        pRoot.right = node;
+        Mirror(pRoot.left);
+        Mirror(pRoot.right);
+        return pRoot;
+    }
+}
+```
+
+#### 顺时针打印矩阵
+
+###### 题目描述
+
+输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下4 X 4矩阵： 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字1,2,3,4,8,12,16,15,14,13,9,5,6,7,11,10.
+
+示例1
+
+###### 输入
+
+```
+[[1,2],[3,4]]
+```
+
+###### 返回值
+
+```
+[1,2,4,3]
+```
+
+```
+import java.util.ArrayList;
+public class Solution {
+    public ArrayList<Integer> printMatrix(int [][] matrix) {
+        ArrayList<Integer> ans = new ArrayList<>();
+       if(matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+           return ans;
+       }
+       int top = 0, bottom = matrix.length - 1;
+       int left = 0, right = matrix[0].length - 1;
+       while(true) {
+           for(int i = left; i <= right; ++i) {
+               ans.add(matrix[top][i]);
+           }
+           if(++top > bottom) {
+               break;
+           }
+           for(int i = top; i <= bottom; ++i) {
+               ans.add(matrix[i][right]);
+           }
+           if(--right < left) {
+               break;
+           }
+           for(int i = right; i >= left; --i) {
+               ans.add(matrix[bottom][i]);
+           }
+           if(--bottom < top) {
+               break;
+           }
+           for(int i = bottom; i >= top; --i) {
+               ans.add(matrix[i][left]);
+           }
+           if(++left > right) {
+               break;
+           }
+       }
+        return ans;
+    }
+}
+```
+
+#### 包含min函数的栈
+
+###### 题目描述
+
+定义栈的数据结构，请在该类型中实现一个能够得到栈中所含最小元素的min函数（时间复杂度应为O（1））。
+
+```
+import java.util.Stack;
+
+public class Solution {
+
+    Stack<Integer> stack = new Stack<>();
+    Stack<Integer> minStack = new Stack<>();
+    
+    public void push(int node) {
+        if(!minStack.isEmpty()) {
+            minStack.push(Math.min(minStack.peek(), node));
+        } else {
+            minStack.push(node);
+        }
+        stack.push(node);
+    }
+    
+    public void pop() {
+        if(!stack.isEmpty()) {
+            stack.pop();
+            minStack.pop();
+        }
+    }
+    
+    public int top() {
+        return stack.peek();
+    }
+    
+    public int min() {
+        return minStack.peek();
+    }
+}
+```
+
+#### 栈的压入、弹出序列
+
+###### 题目描述
+
+输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否可能为该栈的弹出顺序。假设压入栈的所有数字均不相等。例如序列1,2,3,4,5是某栈的压入顺序，序列4,5,3,2,1是该压栈序列对应的一个弹出序列，但4,3,5,1,2就不可能是该压栈序列的弹出序列。（注意：这两个序列的长度是相等的）
+
+示例1
+
+###### 输入
+
+```
+[1,2,3,4,5],[4,3,5,1,2]
+```
+
+###### 返回值
+
+```
+false
+```
+
+> 用一个栈模拟既可
+
+```
+import java.util.*;
+
+public class Solution {
+    public boolean IsPopOrder(int [] pushA,int [] popA) {
+        Stack<Integer> stack = new Stack<>();
+        int index = 0;
+        for(int i = 0; i < pushA.length; ++i) {
+            while(!stack.isEmpty() && stack.peek() == popA[index]) {
+                ++index;
+                stack.pop();
+            }
+            stack.push(pushA[i]);
+        }
+        while(!stack.isEmpty() && stack.peek() == popA[index]) {
+            ++index;
+            stack.pop();
+        }
+        return index == popA.length;
+    }
+}
+```
+
+#### 二叉搜索树的后序遍历序列
+
+###### 题目描述
+
+输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则返回true,否则返回false。假设输入的数组的任意两个数字都互不相同。（ps：我们约定空树不是二叉搜素树）
+
+示例1
+
+###### 输入
+
+```
+[4,8,6,12,16,14,10]
+```
+
+###### 返回值
+
+```
+true
+```
+
+> 后续遍历序列的最后一个是根节点，根据二叉搜索树的性质，根节点的左边节点的值小于根节点的值，右边节点的值大于根节点的值，根据这条性质将后序遍历序列分为左右两个，分别递归判断既可
+
+```
+public class Solution {
+    public boolean VerifySquenceOfBST(int [] sequence) {
+        if(sequence == null || sequence.length == 0) {
+            return false;
+        }
+        return dfs(sequence, 0, sequence.length - 1);
+    }
+    
+    private boolean dfs(int[] sequence, int left, int right) {
+        if(left > right) {
+            return true;
+        }
+        int index = left;
+        for(; index < right; ++index) {
+            if(sequence[index] > sequence[right]) {
+                break;
+            }
+        }
+        for(int i = index; i < right; ++i) {
+            if(sequence[i] < sequence[right]) {
+                return false;
+            }
+        }
+        return dfs(sequence, left, index - 1) && dfs(sequence, index, right - 1);
     }
 }
 ```
