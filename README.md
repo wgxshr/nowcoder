@@ -464,3 +464,115 @@ public class Main {
     }
 }
 ````
+
+#### 9.数字颠倒
+
+###### 输入描述:
+
+```
+输入一个int整数
+```
+
+###### 输出描述:
+
+```
+将这个整数以字符串的形式逆序输出
+```
+
+示例1
+
+###### 输入
+
+
+```
+1516000
+```
+
+###### 输出
+
+```
+0006151
+```
+
+```
+import java.util.*;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int num = sc.nextInt();
+        System.out.println(reverse(num));
+    }
+    
+    private static String reverse(int num) {
+        StringBuilder sb = new StringBuilder();
+        while(num != 0) {
+            sb.append(num % 10 + "");
+            num /= 10;
+        }
+        return sb.toString();
+    }
+}
+```
+
+#### 10.句子逆转
+
+###### 输入描述:
+
+```
+输入一个英文语句，每个单词用空格隔开。保证输入只包含空格和字母。
+```
+
+###### 输出描述:
+
+```
+得到逆序的句子
+```
+
+示例1
+
+###### 输入
+
+```
+I am a boy
+```
+
+###### 输出
+
+```
+boy a am I
+```
+> 先使用trim取出字符串前后的字符串，遍历字符串，如果为空格，则将空格之前的子串加入到栈中，不为空格则将字符追加到子串后面，最后将栈中的字符串加入到结果中
+
+
+````
+import java.util.*;
+
+public class Solution7 {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String str = sc.nextLine();
+        System.out.println(reverse(str));
+    }
+
+    private static String reverse(String str) {
+        str = str.trim();
+        StringBuilder ans = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+        Stack<String> stack = new Stack<>();
+        for(int i = 0; i < str.length(); ++i) {
+            if(str.charAt(i) == ' ') {
+                stack.add(sb.toString());
+                sb = new StringBuilder();
+            } else {
+                sb.append(str.charAt(i));
+            }
+        }
+        stack.add(sb.toString());
+        while(!stack.isEmpty()) {
+            ans.append(" ").append(stack.pop());
+        }
+        return ans.substring(1, ans.length());
+    }
+}
+````
+
