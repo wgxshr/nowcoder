@@ -419,3 +419,48 @@ public class Main {
     }
 }
 ```
+
+#### 8.字符个数统计
+
+###### 输入描述:
+
+```
+输入一行没有空格的字符串。
+```
+
+###### 输出描述:
+
+```
+输出范围在(0~127)字符的个数。
+```
+
+示例1
+
+###### 输入
+```
+abc
+```
+
+###### 输出
+
+```
+3
+```
+````
+import java.util.*;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String str = sc.nextLine();
+        Set<Character> set = new HashSet<>();
+        int ans = 0;
+        for(char c : str.toCharArray()) {
+            if(c >= 0 && c <= 127 && !set.contains(c)) {
+                ++ans;
+            }
+            set.add(c);
+        }
+        System.out.println(ans);
+    }
+}
+````
