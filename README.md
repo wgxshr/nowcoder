@@ -1810,3 +1810,1033 @@ public class Solution {
 }
 ```
 
+#### 二叉树中和为某一值的路径
+
+###### 题目描述
+
+输入一颗二叉树的根节点和一个整数，按字典序打印出二叉树中结点值的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到叶结点所经过的结点形成一条路径。
+
+示例1
+
+###### 输入
+
+```
+{10,5,12,4,7},22
+```
+
+###### 返回值
+
+```
+[[10,5,7],[10,12]]
+```
+
+示例2
+
+###### 输入
+
+```
+{10,5,12,4,7},15
+```
+
+###### 返回值;)
+
+```
+[]
+```
+
+```
+import java.util.ArrayList;
+/**
+public class TreeNode {
+    int val = 0;
+    TreeNode left = null;
+    TreeNode right = null;
+
+    public TreeNode(int val) {
+        this.val = val;
+
+    }
+
+}
+*/
+public class Solution {
+    ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+    public ArrayList<ArrayList<Integer>> FindPath(TreeNode root,int target) {
+        if(root == null) {
+            return ans;
+        }
+        dfs(root, target, new ArrayList<Integer>());
+        return ans;
+    }
+    
+    private void dfs(TreeNode root, int remainTarget, ArrayList<Integer> tmp) {
+        if(root == null) {
+            return ;
+        }
+        remainTarget -= root.val;
+        tmp.add(root.val);
+        if(remainTarget == 0 && root.left == null && root.right == null) {
+            ans.add(new ArrayList<>(tmp));
+            tmp.remove(tmp.size() - 1);
+            return ;
+        }
+        dfs(root.left, remainTarget, tmp);
+        dfs(root.right, remainTarget, tmp);
+        tmp.remove(tmp.size() - 1);
+    }
+}
+```
+
+#### 复杂链表的赋值
+
+###### 题目描述
+
+输入一个复杂链表（每个节点中有节点值，以及两个指针，一个指向下一个节点，另一个特殊指针random指向一个随机节点），请对此链表进行深拷贝，并返回拷贝后的头结点。（注意，输出结果中请不要返回参数中的节点引用，否则判题程序会直接返回空）
+
+```
+/*
+public class RandomListNode {
+    int label;
+    RandomListNode next = null;
+    RandomListNode random = null;
+
+    RandomListNode(int label) {
+        this.label = label;
+    }
+}
+*/
+public class Solution {
+    public RandomListNode Clone(RandomListNode pHead) {
+        if(pHead == null) {
+            return pHead;
+        }
+        RandomListNode cur = pHead;
+        while(cur != null) {
+            RandomListNode next = cur.next;
+            RandomListNode node = new RandomListNode(cur.label);
+            cur.next = node;
+            node.next = next;
+            cur = next;
+        }
+        cur = pHead;
+        while(cur != null && cur.next != null) {
+            if(cur.random != null) {
+                cur.next.random = cur.random.next;
+            }
+            cur = cur.next.next;
+        }
+        RandomListNode dummyHead = new RandomListNode(-1);
+        RandomListNode dCur = dummyHead;
+        cur = pHead;
+        while(cur != null && cur.next != null) {
+            RandomListNode next = cur.next.next;
+            dCur.next = cur.next;
+            dCur = dCur.next;
+            cur.next = next;
+            cur = cur.next;
+        }
+        return dummyHead.next;
+    }
+}
+```
+
+#### 字符串的排列
+
+###### 题目描述
+
+输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则按字典序打印出由字符a,b,c所能排列出来的所有字符串abc,acb,bac,bca,cab和cba。
+
+###### 输入描述:
+
+```
+输入一个字符串,长度不超过9(可能有字符重复),字符只包括大小写字母。
+```
+
+示例1
+
+###### 输入
+
+```
+"ab"
+```
+
+###### 返回值
+
+```
+["ab","ba"]
+```
+
+```
+import java.util.ArrayList;
+public class Solution {
+    ArrayList<String> ans = new ArrayList<>();
+    public ArrayList<String> Permutation(String str) {
+       if(str == null || str.length() == 0) {
+           return ans;
+       }
+       char[] chars = str.toCharArray();
+       int len = chars.length;
+       boolean[] visited = new boolean[len];
+       dfs(chars, new StringBuilder(), visited);
+       return ans;
+    }
+    
+    private void dfs(char[] chars, StringBuilder sb, boolean[] visited) {
+        if(sb.length() == chars.length) {
+            ans.add(sb.toString());
+            return ;
+        }
+        for(int i = 0; i < chars.length; ++i) {
+            if(visited[i]) {
+                continue;
+            }
+            if(i != 0 && chars[i] == chars[i - 1] && !visited[i - 1]) {
+                continue;
+            }
+            visited[i] = true;
+            sb.append(chars[i]);
+            dfs(chars, sb, visited);
+            sb.deleteCharAt(sb.length() - 1);
+            visited[i] = false;
+        }
+    }
+}
+```
+
+#### 数组中出现次数超过一半的数字
+
+###### 题目描述
+
+数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为9的数组{1,2,3,2,2,2,5,4,2}。由于数字2在数组中出现了5次，超过数组长度的一半，因此输出2。如果不存在则输出0。
+
+示例1
+
+###### 输入
+
+```
+[1,2,3,2,2,2,5,4,2]
+```
+
+###### 返回值
+
+```
+2
+```
+
+```
+public class Solution {
+    public int MoreThanHalfNum_Solution(int [] array) {
+        if(array == null || array.length == 0) {
+            return 0;
+        }
+        int cur = array[0], count = 1;
+        for(int i = 1; i < array.length; ++i) {
+            if(array[i] != cur) {
+                if(count > 0) {
+                    --count;
+                } else {
+                    cur = array[i];
+                    count = 1;
+                }
+            } else {
+                ++count;
+            }
+        }
+        count = 0;
+        for(int num : array) {
+            if(num == cur) {
+                ++count;
+            }
+        }
+        return count > array.length / 2 ? cur : 0;
+    }
+}
+```
+
+## 4.10猿辅导面试准备
+
+| 题目                                      | 频次 |
+| ----------------------------------------- | ---- |
+| ~~189. 旋转数组~~                         | 3    |
+| ~~剑指 Offer 27. 二叉树的镜像~~           | 3    |
+| ~~113. 路径总和 II~~                      | 3    |
+| ~~1. 两数之和~~                           | 2    |
+| ~~面试题 03.05. 栈排序~~                  | 2    |
+| ~~74. 搜索二维矩阵~~                      | 2    |
+| ~~110. 平衡二叉树~~                       | 2    |
+| ~~222. 完全二叉树的节点个数~~             | 2    |
+| ~~25. K 个一组翻转链表~~                  | 2    |
+| 剑指 Offer 36. [二叉搜索树与双向链表]()   | 2    |
+| ~~98. 验证二叉搜索树~~                    | 2    |
+| 215. 数组中的第K个最大元素                | 2    |
+| 7. 整数反转                               | 1    |
+| 102. [二叉树]()的层序遍历                 | 1    |
+| 562.矩阵中最长的连续1线段                 | 1    |
+| 41. 缺失的第一个正数                      | 1    |
+| 448. 找到所有数组中消失的数字             | 1    |
+| 82. 删除[排序]()[链表]()中的重复元素 II   | 1    |
+| 94. [二叉树]()的中序遍历                  | 1    |
+| 257. [二叉树]()的所有路径                 | 1    |
+| 124. [二叉树]()中的最大路径和             | 1    |
+| 450. 删除二叉搜索树中的节点               | 1    |
+| 40. 组合总和 II                           | 1    |
+| 658. 找到 K 个最接近的元素                | 1    |
+| 316. 去除重复字母                         | 1    |
+| 86. 分隔[链表]()                          | 1    |
+| 226. 翻转[二叉树]()                       | 1    |
+| 剑指 Offer 22. [链表]()中倒数第k个节点    | 1    |
+| 560. 和为K的子数组                        | 1    |
+| 442. 数组中重复的数据                     | 1    |
+| 1325. 删除给定值的叶子节点                | 1    |
+| 剑指 Offer 25. 合并两个[排序]()的[链表]() | 1    |
+| 240. 搜索二维矩阵 II                      | 1    |
+| 958. [二叉树]()的完全性检验               | 1    |
+| 239. 滑动窗口最大值                       | 1    |
+| 208. 实现 Trie (前缀树)                   | 1    |
+| 99. 恢复二叉搜索树                        | 1    |
+| 83. 删除[排序]()[链表]()中的重复元素      | 1    |
+
+#### 旋转数组
+
+###### 题目描述
+
+一个数组A中存有N（N&gt0）个整数，在不允许使用另外数组的前提下，将每个整数循环向右移M（M>=0）个位置，即将A中的数据由（A0 A1 ……AN-1 ）变换为（AN-M …… AN-1 A0 A1 ……AN-M-1 ）（最后M个数循环移至最前面的M个位置）。如果需要考虑程序移动数据的次数尽量少，要如何设计移动的方法？
+
+示例1
+
+###### 输入
+
+```
+6,2,[1,2,3,4,5,6]
+```
+
+###### 返回值
+
+```
+[5,6,1,2,3,4]
+```
+
+###### 备注:
+
+```
+(1<=N<=100,M>=0)
+```
+
+> 对数组进行三次反转既可，以[1, 2, 3, 4, 5, 6]为例，先反转整个数组，变为[6, 5, 4, 3, 2, 1]，再反转0到m - 1，结果为[5, 6, 4, 3, 2, 1]，最后反转m到数组结束的位置既可。
+
+```
+import java.util.*;
+
+
+public class Solution {
+    /**
+     * 旋转数组
+     * @param n int整型 数组长度
+     * @param m int整型 右移距离
+     * @param a int整型一维数组 给定数组
+     * @return int整型一维数组
+     */
+    public int[] solve (int n, int m, int[] a) {
+        // write code here
+        if(a == null || a.length == 0 || m == 0) {
+            return a;
+        }
+        m %= a.length;
+        reverse(a, 0, a.length - 1);
+        reverse(a, 0, m - 1);
+        reverse(a, m, a.length - 1);
+        return a;
+    }
+    
+    private void reverse(int[] a, int left, int right) {
+        while(left < right) {
+            int tmp = a[left];
+            a[left++] = a[right];
+            a[right--] = tmp;
+        }
+    }
+}
+```
+
+#### 二叉树的镜像
+
+###### 题目描述
+
+操作给定的二叉树，将其变换为源二叉树的镜像。
+
+###### 输入描述:
+
+```
+二叉树的镜像定义：源二叉树 
+    	    8
+    	   /  \
+    	  6   10
+    	 / \  / \
+    	5  7 9 11
+    	镜像二叉树
+    	    8
+    	   /  \
+    	  10   6
+    	 / \  / \
+    	11 9 7  5
+```
+
+> 二叉树反转，先反转根节点的左右节点，再递归一次反转根节点的左子树和右子树既可
+
+**先序遍历解法**
+
+```
+/**
+public class TreeNode {
+    int val = 0;
+    TreeNode left = null;
+    TreeNode right = null;
+
+    public TreeNode(int val) {
+        this.val = val;
+
+    }
+
+}
+*/
+public class Solution {
+    public void Mirror(TreeNode root) {
+        if(root == null) {
+            return ;
+        }
+        TreeNode tmp = root.left;
+        root.left = root.right;
+        root.right = tmp;
+        Mirror(root.left);
+        Mirror(root.right);
+        return ;
+    }
+}
+```
+
+**后序遍历解法**
+
+```
+/**
+public class TreeNode {
+    int val = 0;
+    TreeNode left = null;
+    TreeNode right = null;
+
+    public TreeNode(int val) {
+        this.val = val;
+
+    }
+
+}
+*/
+public class Solution {
+    public void Mirror(TreeNode root) {
+        if(root == null) {
+            return ;
+        }
+        reverse(root);
+    }
+    
+    private TreeNode reverse(TreeNode root) {
+        if(root == null) {
+            return root;
+        }
+        TreeNode left = reverse(root.left);
+        TreeNode right = reverse(root.right);
+        root.left = right;
+        root.right = left;
+        return root;
+    }
+}
+```
+
+#### 路径总合
+
+给你二叉树的根节点 root 和一个整数目标和 targetSum ，找出所有 从根节点到叶子节点 路径总和等于给定目标和的路径。
+
+叶子节点 是指没有子节点的节点。
+
+ 
+
+示例 1：
+
+![img](https://assets.leetcode.com/uploads/2021/01/18/pathsumii1.jpg)
+```
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22
+输出：[[5,4,11,2],[5,8,4,5]]
+```
+示例 2：
+
+![img](https://assets.leetcode.com/uploads/2021/01/18/pathsum2.jpg)
+
+```
+输入：root = [1,2,3], targetSum = 5
+输出：[]
+```
+示例 3：
+```
+输入：root = [1,2], targetSum = 0
+输出：[]
+```
+
+> 回溯，当root为空的时候，直接返回，如果剩下的target为0，且当前节点为叶子节点，则将路径加入到结果集中，并将叶子节点移除保存的路径list进行回溯。
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    List<List<Integer>> ans = new ArrayList<>();
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        if(root == null) {
+            return ans;
+        }
+        dfs(root, targetSum, new ArrayList<Integer>());
+        return ans;
+    }
+
+    private void dfs(TreeNode root, int remain, List<Integer> tmp) {
+        if(root == null) {
+            return ;
+        }
+        remain -= root.val;
+        tmp.add(root.val);
+        if(remain == 0 && root.left == null && root.right == null) {
+            ans.add(new ArrayList<>(tmp));
+            tmp.remove(tmp.size() - 1);
+            return ;
+        }
+        dfs(root.left, remain, tmp);
+        dfs(root.right, remain, tmp);
+        tmp.remove(tmp.size() - 1);
+    }
+}
+```
+
+#### 两数之和
+
+###### 题目描述
+
+给出一个整数数组，请在数组中找出两个加起来等于目标值的数，
+
+你给出的函数twoSum 需要返回这两个数字的下标（index1，index2），需要满足 index1 小于index2.。注意：下标是从1开始的
+
+假设给出的数组中只存在唯一解
+
+例如：
+
+给出的数组为 {20, 70, 110, 150},目标值为90
+输出 index1=1, index2=2
+
+示例1
+
+###### 输入
+
+```
+[3,2,4],6
+```
+
+###### 返回值
+
+```
+[2,3]
+```
+
+> 首先判断边界条件，如果输入数组为空或者长度小于2，则无结果；
+>
+> 使用map保存遍历过的数组元素，key为target与数组元素的差值，值为数组元素的下标，如果遍历过程中发现map中有key的值与数组元素相等，则说明找到了结果集，将map中取出的val和数组下标分别加一返回既可
+
+```
+import java.util.*;
+
+
+public class Solution {
+    /**
+     * 
+     * @param numbers int整型一维数组 
+     * @param target int整型 
+     * @return int整型一维数组
+     */
+    public int[] twoSum (int[] numbers, int target) {
+        // write code here
+        if(numbers == null || numbers.length < 2) {
+            return new int[0];
+        }
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int i = 0; i < numbers.length; ++i) {
+            if(map.containsKey(numbers[i])) {
+                return new int[]{map.get(numbers[i]) + 1, i + 1};
+            }
+            map.put(target - numbers[i], i);
+        }
+        return new int[0];
+    }
+}
+```
+
+#### 栈排序
+
+栈排序。 编写程序，对栈进行排序使最小元素位于栈顶。最多只能使用一个其他的临时栈存放数据，但不得将元素复制到别的数据结构（如数组）中。该栈支持如下操作：push、pop、peek 和 isEmpty。当栈为空时，peek 返回 -1。
+
+示例1:
+```
+ 输入：
+["SortedStack", "push", "push", "peek", "pop", "peek"]
+[[], [1], [2], [], [], []]
+ 输出：
+[null,null,null,1,null,2]
+```
+示例2:
+```
+ 输入： 
+["SortedStack", "pop", "pop", "push", "pop", "isEmpty"]
+[[], [], [], [1], [], []]
+ 输出：
+[null,null,null,null,null,true]
+```
+
+> 主要从入栈操作下手，本体要实现一个最小元素位于栈顶的栈，也就是最小元素出栈后，栈顶是次小元素，这就是一个递增的单调栈
+>
+> 入栈时，先将栈中比入栈元素大的元素弹出栈，放到辅助栈中，将需要入栈的元素入栈，然后将辅助栈中的元素依次弹出放到主栈中既可
+
+```
+class SortedStack {
+
+    Stack<Integer> stack;
+    Stack<Integer> assistStack;
+    public SortedStack() {
+        this.stack = new Stack<>();
+        this.assistStack = new Stack<>();
+    }
+    
+    public void push(int val) {
+        while(!stack.isEmpty() && stack.peek() < val) {
+            assistStack.push(stack.pop());
+        }
+        stack.push(val);
+        while(!assistStack.isEmpty()) {
+            stack.push(assistStack.pop());
+        }
+    }
+    
+    public void pop() {
+        if(stack.isEmpty()) {
+            return ;
+        }
+        stack.pop();
+    }
+    
+    public int peek() {
+        if(stack.isEmpty()) {
+            return -1;
+        }
+        return stack.peek();
+    }
+    
+    public boolean isEmpty() {
+        return stack.isEmpty();
+    }
+}
+
+/**
+ * Your SortedStack object will be instantiated and called as such:
+ * SortedStack obj = new SortedStack();
+ * obj.push(val);
+ * obj.pop();
+ * int param_3 = obj.peek();
+ * boolean param_4 = obj.isEmpty();
+ */
+```
+
+#### 搜索二维矩阵
+
+编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：
+
+每行中的整数从左到右按升序排列。
+每行的第一个整数大于前一行的最后一个整数。
+
+示例 1：
+
+![img](https://assets.leetcode.com/uploads/2020/10/05/mat.jpg)
+
+```
+输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+输出：true
+```
+示例 2：
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/11/25/mat2.jpg)
+
+```
+输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13
+输出：false
+```
+
+> 由于矩阵从从做到右是递增的，从上到下是递增的，所以可以从对角线开始，类似于二分查找，数组对应位置的元素等于target则返回true，小于说明这一行所有的元素都小于target，到下一行查找，大于说明本列及后面所有列的值都大于target，到前一列查找。
+
+```
+class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0
+        || matrix[0][0] > target || matrix[matrix.length - 1][matrix[0].length - 1] < target) {
+            return false;
+        }
+        int top = 0, right = matrix[0].length - 1;
+        while(top < matrix.length && right >= 0) {
+            int val = matrix[top][right];
+            if(val == target) {
+                return true;
+            }
+            if(val > target) {
+                --right;
+            } else {
+                ++top;
+            }
+        }
+        return false;
+    }
+}
+```
+
+#### 平衡二叉树
+
+###### 题目描述
+
+输入一棵二叉树，判断该二叉树是否是平衡二叉树。
+
+在这里，我们只需要考虑其平衡性，不需要考虑其是不是排序二叉树
+
+**平衡二叉树**（Balanced Binary Tree），具有以下性质：它是一棵空树或它的左右两个子树的高度差的绝对值不超过1，并且左右两个子树都是一棵平衡二叉树。
+
+示例1
+
+###### 输入
+
+```
+{1,2,3,4,5,6,7}
+```
+
+###### 返回值
+
+```
+true
+```
+
+> 平衡二叉树的性质是左右子树的高度之差不超过1，用递归既可，获取节点左右子树的高度，如果高度之差超过1，则不是平衡二叉树
+
+```
+public class Solution {
+    public boolean IsBalanced_Solution(TreeNode root) {
+        if(root == null) {
+            return true;
+        }
+        return getNodes(root) != -1;
+    }
+    
+    private int getNodes(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+        int left = getNodes(root.left);
+        int right = getNodes(root.right);
+        if(Math.abs(left - right) > 1 || left == -1 || right == -1) {
+            return -1;
+        }
+        return Math.max(left, right) + 1;
+    }
+}
+```
+
+#### 判断二叉树是否为完全二叉树（补充）
+
+> 讲二叉树的节点加入到队列中，当出队元素为空时，停止遍历二叉树。由于完全二叉树的性质要求在空节点之后不会再出现非空节点，因此遍历对内元素，如果有非空元素，则说明这个树不是完全二叉树
+
+```
+public class Solution {
+	public boolean isCompleteTree(TreeNode root) {
+		if(root == null) {
+			return true;
+		}
+		Queue<TreeMap> queue = new LinkedList<>();
+		queue.offer(root);
+		while(!queue.isEmpty()) {
+			TreeNode node = queue.poll();
+			if(node == null) {
+				break;
+			}
+			queue.offer(node.left);
+			queue.offer(node.right);
+		}
+		while(!queue.isEmpty()) {
+			if(queue.poll() != null) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
+```
+
+#### 验证二叉搜索树
+
+> 由二叉搜索树的性质可知，对二叉搜索树进行中序遍历，会得到一个单调递增的序列，因此，只需对二叉树进行遍历，并在遍历过程中判断当前节点和前一个节点的大小关系
+
+```
+public class Solution {
+	TreeNode pre = null;
+	public boolean isSearchTree(TreeNode root) {
+		if(root == null) {
+			return true;
+		}
+		if(!isSearchTree(root.left)){
+			return false;
+		}
+		if(pre != null && pre.val >= root.val) {
+			return false;
+		}
+		pre = root;
+		return isSearchTree(root.right);
+	}
+}
+```
+
+#### 完全二叉树的节点个数
+
+给你一棵 完全二叉树 的根节点 root ，求出该树的节点个数。
+
+完全二叉树 的定义如下：在完全二叉树中，除了最底层节点可能没填满外，其余每层节点数都达到最大值，并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层，则该层包含 1~ 2h 个节点。
+
+ 
+
+示例 1：
+
+![img](https://assets.leetcode.com/uploads/2021/01/14/complete.jpg)
+```
+输入：root = [1,2,3,4,5,6]
+输出：6
+```
+示例 2：
+```
+输入：root = []
+输出：0
+```
+示例 3：
+```
+输入：root = [1]
+输出：1
+```
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int countNodes(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+        int hl = 0, hr = 0;
+        TreeNode node = root;
+        while(node != null) {
+            ++hl;
+            node = node.left;
+        }
+        node = root;
+        while(node != null) {
+            ++hr;
+            node = node.right;
+        }
+        if(hl == hr) {
+            return (int)Math.pow(2, hl) - 1;
+        }
+        return countNodes(root.left) + countNodes(root.right) + 1;
+    }
+}
+```
+
+#### k个一组反转链表
+
+###### 题目描述
+
+将给出的链表中的节点每*k* 个一组翻转，返回翻转后的链表
+如果链表中的节点数不是 *k* 的倍数，将最后剩下的节点保持原样
+你不能更改节点中的值，只能更改节点本身。
+要求空间复杂度 *O*(1)
+
+例如：
+
+给定的链表是 1→2→3→4→5
+
+对于 *k*=2, 你应该返回 2→1→4→3→5
+
+对于*k*=3, 你应该返回 3→2→1→4→5
+
+示例1
+
+###### 输入
+
+```
+{1,2,3,4,5},2
+```
+
+###### 返回值
+
+```
+{2,1,4,3,5}
+```
+
+```
+import java.util.*;
+
+/*
+ * public class ListNode {
+ *   int val;
+ *   ListNode next = null;
+ * }
+ */
+
+public class Solution {
+    /**
+     * 
+     * @param head ListNode类 
+     * @param k int整型 
+     * @return ListNode类
+     */
+    public ListNode reverseKGroup (ListNode head, int k) {
+        // write code here
+        ListNode A = head, B = head;
+        for(int i = 0; i < k; ++i) {
+            if(B == null) {
+                return head;
+            }
+            B = B.next;
+        }
+        ListNode newHead = reverse(A, B);
+        A.next = reverseKGroup(B, k);
+        return newHead;
+    }
+    
+    private ListNode reverse(ListNode A, ListNode B) {
+        ListNode cur = A, pre = null, nxt = null;
+        while(cur != B) {
+            nxt = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = nxt;
+        }
+        return pre;
+    }
+}
+```
+
+#### 数组中的第K个最大元素
+
+在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+示例 1:
+```
+输入: [3,2,1,5,6,4] 和 k = 2
+输出: 5
+```
+示例 2:
+```
+输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
+输出: 4
+```
+
+```
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        int len = nums.length;
+        PriorityQueue<Integer> queue = new PriorityQueue<>((a, b) -> a - b);
+        for(int i = 0; i < k; ++i) {
+            queue.offer(nums[i]);
+        }
+        for(int i = k; i < len; ++i) {
+            if(nums[i] > queue.peek()) {
+                queue.poll();
+                queue.offer(nums[i]);
+            }
+        }
+        return queue.peek();
+    }
+}
+```
+
+#### 反转整数
+
+给你一个 32 位的有符号整数 x ，返回将 x 中的数字部分反转后的结果。
+
+如果反转后整数超过 32 位的有符号整数的范围 [−231,  231 − 1] ，就返回 0。
+
+假设环境不允许存储 64 位整数（有符号或无符号）。
+
+
+示例 1：
+```
+输入：x = 123
+输出：321
+```
+示例 2：
+```
+输入：x = -123
+输出：-321
+```
+示例 3：
+```
+输入：x = 120
+输出：21
+```
+示例 4：
+```
+输入：x = 0
+输出：0
+```
+
+> 主要考察对边界情况的判断，当超过Integer的最大值和最小值时，需要单独判断
+
+```
+class Solution {
+    public int reverse(int x) {
+        int ans = 0;
+        while(x != 0) {
+            int num = x % 10;
+            if(ans > Integer.MAX_VALUE / 10 || (ans == Integer.MAX_VALUE / 10 && num > 7)) {
+                return 0;
+            }
+            if(ans < Integer.MIN_VALUE / 10 || (ans == Integer.MAX_VALUE / 10 && num < -8)) {
+                return 0;
+            }
+            ans = ans * 10 + num;
+            x /= 10;
+        }
+        return ans;
+    }
+}
+```
+
