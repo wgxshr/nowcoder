@@ -2840,3 +2840,382 @@ class Solution {
 }
 ```
 
+#### 二叉树的层次遍历
+
+给你一个二叉树，请你返回其按 层序遍历 得到的节点值。 （即逐层地，从左到右访问所有节点）。
+
+示例：
+```
+二叉树：[3,9,20,null,null,15,7],
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+返回其层序遍历结果：
+```
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+```
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    List<List<Integer>> ans = new ArrayList<>();
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        if(root == null) {
+            return ans;
+        }
+        dfs(root, 0);
+        return ans;
+    }
+
+    private void dfs(TreeNode root, int depth) {
+        if(root == null) {
+            return ;
+        }
+        if(ans.size() == depth) {
+            List<Integer> list = new ArrayList<>();
+            list.add(root.val);
+            ans.add(list);
+        } else {
+            ans.get(depth).add(root.val);
+        }
+        dfs(root.left, depth + 1);
+        dfs(root.right, depth + 1);
+    }
+}
+```
+
+#### 矩阵中最长的连续1线段
+
+给定一个01矩阵 M，找到矩阵中最长的连续1线段。
+这条线段可以是水平的、垂直的、对角线的或者反对角线的。
+
+```
+示例:
+输入:
+[[0,1,1,0],
+ [0,1,1,0],
+ [0,0,0,1]]
+输出: 3
+提示: 给定矩阵中的元素数量不会超过 10,000。
+```
+
+```
+public class Solution {
+	public int longestLine(int[][] array) {
+		if(array == null || array.length == 0 || array[0].length == 0) {
+			return 0;
+		}
+		int m = array.length;
+		int n = array[0].length;
+		int[][][] dp = new int[m][n][4];
+		for(int i = 0; i < m; ++i) {
+			for(int j = 0; j < n; ++j) {
+				if(array[m][n] == 0) {
+					continue;
+				}
+				for(int k = 0; k < 4; ++k) {
+					dp[i][j][k] = 1;
+				}
+				if(j - 1 >= 0) {
+					dp[i][j][0] += dp[i][j - 1][0];
+				}
+				if(i - 1 >= 0) {
+					dp[i][j][1] += dp[i - 1][j][1];
+				}
+				if(i - 1 >= 0 && j - 1 >= 0) {
+					dp[i][j][2] += dp[i - 1][j - 1][2];
+				}
+				if(i - 1 >= 0 && j + 1 < n) {
+					dp[i][j][3] += dp[i - 1][j + 1][3];
+				}
+				ans = Math.max(ans, Math.max(dp[i][j][0], dp[i][j][1]));
+				ans = Math.max(ans, Math.max(dp[i][j][2], dp[i][j][3]));
+			}
+		}
+		return ans;
+	}
+}
+```
+
+#### 缺失的第一个正数
+
+ 
+
+进阶：你可以实现时间复杂度为 O(n) 并且只使用常数级别额外空间的解决方案吗？
+
+示例 1：
+
+```
+输入：nums = [1,2,0]
+输出：3
+```
+
+示例 2：
+
+```
+输入：nums = [3,4,-1,1]
+输出：2
+```
+
+示例 3：
+
+```
+输入：nums = [7,8,9,11,12]
+输出：1
+```
+
+O(n)空间复杂度解法
+
+```
+class Solution {
+    public int firstMissingPositive(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return 1;
+        }
+        int len = nums.length;
+        int[] array = new int[len + 1];
+        for(int num : nums) {
+            if(num > 0 && num <= len) {
+                array[num]++;
+            }
+        }
+        for(int i = 1; i < array.length; ++i) {
+            if(array[i] == 0) {
+                return i;
+            }
+        }
+        return len + 1;
+    }
+}
+```
+
+常数空间复杂度解法
+
+```
+class Solution {
+    public int firstMissingPositive(int[] nums) {
+        int len = nums.length;
+        for (int i = 0; i < len; i++) {
+            while (nums[i] > 0 && nums[i] <= len && nums[nums[i] - 1] != nums[i]) {
+                swap(nums, nums[i] - 1, i);
+            }
+        }
+        for (int i = 0; i < len; i++) {
+            if (nums[i] != i + 1) {
+                return i + 1;
+            }
+        }
+        return len + 1;
+    }
+
+    private void swap(int[] nums, int index1, int index2) {
+        int temp = nums[index1];
+        nums[index1] = nums[index2];
+        nums[index2] = temp;
+    }
+}
+```
+
+#### 找到所有数组中消失的数字
+
+给定一个范围在  1 ≤ a[i] ≤ n ( n = 数组大小 ) 的 整型数组，数组中的元素一些出现了两次，另一些只出现一次。
+
+找到所有在 [1, n] 范围之间没有出现在数组中的数字。
+
+您能在不使用额外空间且时间复杂度为O(n)的情况下完成这个任务吗? 你可以假定返回的数组不算在额外空间内。
+
+示例:
+```
+输入:
+[4,3,2,7,8,2,3,1]
+
+输出:
+[5,6]
+```
+
+```
+class Solution {
+    public List<Integer> findDisappearedNumbers(int[] nums) {
+        List<Integer> ans = new ArrayList<>();
+        if(nums == null || nums.length == 0) {
+            return ans;
+        }
+        for(int i = 0; i < nums.length; ++i) {
+            while(nums[nums[i] - 1] != nums[i]) {
+                swap(nums, nums[i] - 1, i);
+            }
+        }
+        for(int i = 0; i < nums.length; ++i) {
+            if(nums[i] != i + 1) {
+                ans.add(i + 1);
+            }
+        }
+        return ans;
+    }
+
+    private void swap(int[] nums, int index1, int index2) {
+        int tmp = nums[index1];
+        nums[index1] = nums[index2];
+        nums[index2] = tmp;
+    }
+}
+```
+
+#### 删除排序链表中重复的元素
+
+存在一个按升序排列的链表，给你这个链表的头节点 head ，请你删除链表中所有存在数字重复情况的节点，只保留原始链表中 没有重复出现 的数字。
+
+返回同样按升序排列的结果链表。
+
+示例 1：
+
+![img](https://assets.leetcode.com/uploads/2021/01/04/linkedlist1.jpg)
+
+```
+输入：head = [1,2,3,3,4,4,5]
+输出：[1,2,5]
+```
+示例 2：
+
+![img](https://assets.leetcode.com/uploads/2021/01/04/linkedlist2.jpg)
+
+```
+输入：head = [1,1,1,2,3]
+输出：[2,3]
+```
+
+```
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head == null || head.next == null) {
+            return head;
+        }
+        ListNode dummy = new ListNode(-1), cur = dummy;
+        dummy.next = head;
+        while(cur.next != null && cur.next.next != null) {
+            if(cur.next.val == cur.next.next.val) {
+                ListNode tmp = cur.next;
+                while(tmp != null && tmp.next != null && tmp.val == tmp.next.val) {
+                    tmp = tmp.next;
+                }
+                cur.next = tmp.next;
+            } else {
+                cur = cur.next;
+            }
+        }
+        return dummy.next;
+    }
+}
+```
+
+#### 二叉树的中序遍历
+
+递归解法
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    List<Integer> ans = new ArrayList<>();
+    public List<Integer> inorderTraversal(TreeNode root) {
+        if(root == null) {
+            return ans;
+        }
+        dfs(root);
+        return ans;
+    }
+
+    private void dfs(TreeNode root) {
+        if(root == null) {
+            return ;
+        }
+        dfs(root.left);
+        ans.add(root.val);
+        dfs(root.right);
+    }
+}
+```
+
+迭代解法
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        if(root == null) {
+            return ans;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        while(!stack.isEmpty() || root != null) {
+            while(root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();
+            ans.add(root.val);
+            root = root.right;
+        }
+        return ans;
+    }
+}
+```
+
