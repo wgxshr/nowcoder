@@ -3219,3 +3219,554 @@ class Solution {
 }
 ```
 
+#### 二叉树的所有路径
+
+给定一个二叉树，返回所有从根节点到叶子节点的路径。
+
+说明: 叶子节点是指没有子节点的节点。
+
+示例:
+```
+输入:
+
+   1
+ /   \
+2     3
+ \
+  5
+
+输出: ["1->2->5", "1->3"]
+
+解释: 所有根节点到叶子节点的路径为: 1->2->5, 1->3
+```
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    List<String> ans = new ArrayList<>();
+    public List<String> binaryTreePaths(TreeNode root) {
+        if(root == null) {
+            return ans;
+        }
+        dfs(root, new StringBuilder());
+        return ans;
+    }
+
+    private void dfs(TreeNode root, StringBuilder sb) {
+        if(root == null) {
+            return ;
+        }
+        if(root.left == null && root.right == null) {
+            ans.add(sb.toString() + root.val);
+            return ;
+        }
+        String tmp = root.val + "->";
+        sb.append(tmp);
+        dfs(root.left, sb);
+        dfs(root.right, sb);
+        sb.delete(sb.length() - tmp.length(), sb.length());
+    }
+}
+```
+
+#### 二叉树的最大路径和
+
+路径 被定义为一条从树中任意节点出发，沿父节点-子节点连接，达到任意节点的序列。同一个节点在一条路径序列中 至多出现一次 。该路径 至少包含一个 节点，且不一定经过根节点。
+
+路径和 是路径中各节点值的总和。
+
+给你一个二叉树的根节点 root ，返回其 最大路径和 。
+示例 1：
+
+![img](https://assets.leetcode.com/uploads/2020/10/13/exx1.jpg)
+
+```
+输入：root = [1,2,3]
+输出：6
+解释：最优路径是 2 -> 1 -> 3 ，路径和为 2 + 1 + 3 = 6
+```
+示例 2：
+
+![img](https://assets.leetcode.com/uploads/2020/10/13/exx2.jpg)
+
+```
+输入：root = [-10,9,20,null,null,15,7]
+输出：42
+解释：最优路径是 15 -> 20 -> 7 ，路径和为 15 + 20 + 7 = 42
+```
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int ans = Integer.MIN_VALUE;
+    public int maxPathSum(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+        getPathSum(root);
+        return ans;
+    }
+
+    public int getPathSum(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+        int left = Math.max(0, getPathSum(root.left));
+        int right = Math.max(0, getPathSum(root.right));
+        ans = Math.max(ans, left + right + root.val);
+        return Math.max(left, right) + root.val;
+    }
+}
+```
+
+#### 删除二叉树中的节点
+
+给定一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的 key 对应的节点，并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。
+
+一般来说，删除节点可分为两个步骤：
+
+首先找到需要删除的节点；
+如果找到了，删除它。
+说明： 要求算法时间复杂度为 O(h)，h 为树的高度。
+
+示例:
+```
+root = [5,3,6,2,4,null,7]
+key = 3
+
+    5
+   / \
+  3   6
+ / \   \
+2   4   7
+
+给定需要删除的节点值是 3，所以我们首先找到 3 这个节点，然后删除它。
+
+一个正确的答案是 [5,4,6,2,null,null,7], 如下图所示。
+
+    5
+   / \
+  4   6
+ /     \
+2       7
+
+另一个正确答案是 [5,2,6,null,4,null,7]。
+
+    5
+   / \
+  2   6
+   \   \
+    4   7
+```
+
+```
+public TreeNode deleteNode(TreeNode root, int key) {
+        if(root == null) {
+            return root;
+        }
+        if(root.val > key) {
+            root.left = deleteNode(root.left, key);
+        } else if(root.val < key) {
+            root.right = deleteNode(root.right, key);
+        } else {
+            if(root.left == null) {
+                return root.right;
+            } else if(root.right == null) {
+                return root.left;
+            } else {
+                TreeNode node = root.right;
+                while(node.left != null) {
+                    node = node.left;
+                }
+                node.left = root.left;
+                return root.right;
+            }
+        }
+        return root;
+    }
+```
+
+#### 组合总数
+
+给定一个数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+
+candidates 中的每个数字在每个组合中只能使用一次。
+
+说明：
+
+所有数字（包括目标数）都是正整数。
+解集不能包含重复的组合。 
+示例 1:
+```
+输入: candidates = [10,1,2,7,6,1,5], target = 8,
+所求解集为:
+[
+  [1, 7],
+  [1, 2, 5],
+  [2, 6],
+  [1, 1, 6]
+]
+```
+示例 2:
+```
+输入: candidates = [2,5,2,1,2], target = 5,
+所求解集为:
+[
+  [1,2,2],
+  [5]
+]
+```
+```
+class Solution {
+    List<List<Integer>> ans = new ArrayList<>();
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        if(candidates == null || candidates.length == 0) {
+            return ans;
+        }
+        Arrays.sort(candidates);
+        dfs(candidates, target, new ArrayList<>(), 0);
+        return ans;
+    }
+
+    private void dfs(int[] candidates, int remain, List<Integer> list, int start) {
+        if(remain < 0) {
+            return ;
+        }
+        if(remain == 0) {
+            ans.add(new ArrayList<>(list));
+            return ;
+        }
+        for(int i = start; i < candidates.length; ++i) {
+            if(i != start && candidates[i] == candidates[i - 1]) {
+                continue;
+            }
+            list.add(candidates[i]);
+            dfs(candidates, remain - candidates[i], list, i + 1);
+            list.remove(list.size() - 1);
+        }
+    }
+}
+```
+
+#### 去除重复的字符
+
+给你一个字符串 `s` ，请你去除字符串中重复的字母，使得每个字母只出现一次。需保证 **返回结果的字典序最小**（要求不能打乱其他字符的相对位置）。
+
+**示例 1：**
+
+```
+输入：s = "bcabc"
+输出："abc"
+```
+
+**示例 2：**
+
+```
+输入：s = "cbacdcbc"
+输出："acdb"
+```
+
+```
+class Solution {
+    public String removeDuplicateLetters(String s) {
+        if(s == null || s.length() < 2) {
+            return s;
+        }
+        Stack<Character> stack = new Stack<>();
+        for(int i = 0; i < s.length(); ++i) {
+            char c = s.charAt(i);
+            if(stack.contains(c)) {
+                continue;
+            }
+            while(!stack.isEmpty() && stack.peek() > c && s.indexOf(stack.peek(), i) != -1) {
+                stack.pop();
+            }
+            stack.push(c);
+        }
+        char[] ans = new char[stack.size()];
+        for(int i = 0; i < stack.size(); ++i) {
+            ans[i] = stack.get(i);
+        }
+        return new String(ans);
+    }
+}
+```
+
+#### 找到k个最接近的元素
+
+给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。
+
+整数 a 比整数 b 更接近 x 需要满足：
+
+- |a - x| < |b - x| 或者
+
+- |a - x| == |b - x| 且 a < b
+
+示例 1：
+```
+输入：arr = [1,2,3,4,5], k = 4, x = 3
+输出：[1,2,3,4]
+```
+示例 2：
+```
+输入：arr = [1,2,3,4,5], k = 4, x = -1
+输出：[1,2,3,4]
+```
+```
+class Solution {
+    public List<Integer> findClosestElements(int[] arr, int k, int x) {
+        List<Integer> ans = new ArrayList<>();
+        if(arr == null || arr.length < k) {
+            return ans;
+        }
+        int left = 0, right = arr.length - 1;
+        int removeSize = arr.length - k;
+        while(removeSize > 0) {
+            if(Math.abs(arr[left] - x) > Math.abs(arr[right] - x)) {
+                ++left;
+            } else {
+                --right;
+            }
+            --removeSize;
+        }
+        for(int i = left; i < left + k; ++i) {
+            ans.add(arr[i]);
+        }
+        return ans;
+    }
+}
+```
+
+#### 分隔链表
+
+给你一个链表的头节点 head 和一个特定值 x ，请你对链表进行分隔，使得所有 小于 x 的节点都出现在 大于或等于 x 的节点之前。
+
+你应当 保留 两个分区中每个节点的初始相对位置。
+
+ 
+
+示例 1：
+
+<img src="https://assets.leetcode.com/uploads/2021/01/04/partition.jpg" alt="img" style="zoom:50%;" />
+
+```
+输入：head = [1,4,3,2,5,2], x = 3
+输出：[1,2,2,4,3,5]
+```
+示例 2：
+```
+输入：head = [2,1], x = 2
+输出：[1,2]
+```
+```
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode partition(ListNode head, int x) {
+        if(head == null || head.next == null) {
+            return head;
+        }
+        ListNode small = new ListNode(-1), sCur = small;
+        ListNode big = new ListNode(-1), bCur = big;
+        ListNode cur = head;
+        while(cur != null) {
+            if(cur.val < x) {
+                sCur.next = cur;
+                sCur = sCur.next;
+            } else {
+                bCur.next = cur;
+                bCur = bCur.next;
+            }
+            cur = cur.next;
+        }
+        bCur.next = null;
+        sCur.next = big.next;
+        return small.next;
+    }
+}
+
+```
+
+#### 反转二叉树
+
+翻转一棵二叉树。
+
+示例：
+
+输入：
+```
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
+```
+输出：
+```
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+```
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if(root == null) {
+            return root;
+        }
+        TreeNode left = invertTree(root.left);
+        TreeNode right = invertTree(root.right);
+        root.left = right;
+        root.right = left;
+        return root;
+    }
+}
+```
+
+#### 链表中倒数第k个节点
+
+输入一个链表，输出该链表中倒数第k个节点。为了符合大多数人的习惯，本题从1开始计数，即链表的尾节点是倒数第1个节点。
+
+例如，一个链表有 6 个节点，从头节点开始，它们的值依次是 1、2、3、4、5、6。这个链表的倒数第 3 个节点是值为 4 的节点。
+
+示例：
+```
+给定一个链表: 1->2->3->4->5, 和 k = 2.
+
+返回链表 4->5.
+```
+```
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode getKthFromEnd(ListNode head, int k) {
+        if(head == null) {
+            return head;
+        }
+        ListNode fast = head, slow = head;
+        while(fast != null) {
+            fast = fast.next;
+            if(k <= 0) {
+                slow = slow.next;
+            }
+            --k;
+        }
+        return k <= 0 ? slow : null;
+    }
+}
+```
+
+#### 和为k的子数组
+
+给定一个整数数组和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数。
+
+示例 1 :
+```
+输入:nums = [1,1,1], k = 2
+输出: 2 , [1,1] 与 [1,1] 为两种不同的情况。
+```
+```
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        if(nums == null || nums.length == 0) {
+            return 0;
+        }
+        int ans = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        int sum = 0;
+        for(int i = 0; i < nums.length; ++i) {
+            sum += nums[i];
+            if(map.containsKey(sum - k)) {
+                ans += map.get(sum - k);
+            }
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+        return ans;
+    }
+}
+```
+
+#### 数组中重复的元素
+
+给定一个整数数组 a，其中1 ≤ a[i] ≤ n （n为数组长度）, 其中有些元素出现两次而其他元素出现一次。
+
+找到所有出现两次的元素。
+
+你可以不用到任何额外空间并在O(n)时间复杂度内解决这个问题吗？
+
+示例：
+```
+输入:
+[4,3,2,7,8,2,3,1]
+
+输出:
+[2,3]
+```
+```
+class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+        List<Integer> ans = new ArrayList<>();
+        int len = nums.length;
+        for(int i = 0; i < len; ++i) {
+            nums[(nums[i] - 1) % len] += len;
+        }
+        for(int i = 0; i < len; ++i) {
+            if(nums[i] > 2 * len) {
+                ans.add(i + 1);
+            }
+        }
+        return ans;
+    }
+}
+```
