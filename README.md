@@ -1887,7 +1887,7 @@ public class Solution {
 }
 ```
 
-#### 复杂链表的赋值
+#### 复杂链表的复制
 
 ###### 题目描述
 
@@ -2623,7 +2623,8 @@ public class Solution {
 
 示例 1：
 
-![img](https://assets.leetcode.com/uploads/2021/01/14/complete.jpg)
+<img src="https://assets.leetcode.com/uploads/2021/01/14/complete.jpg" alt="img" style="zoom:50%;" />
+
 ```
 输入：root = [1,2,3,4,5,6]
 输出：6
@@ -3090,7 +3091,7 @@ class Solution {
 
 示例 1：
 
-![img](https://assets.leetcode.com/uploads/2021/01/04/linkedlist1.jpg)
+<img src="https://assets.leetcode.com/uploads/2021/01/04/linkedlist1.jpg" alt="img" style="zoom:50%;" />
 
 ```
 输入：head = [1,2,3,3,4,4,5]
@@ -3098,7 +3099,7 @@ class Solution {
 ```
 示例 2：
 
-![img](https://assets.leetcode.com/uploads/2021/01/04/linkedlist2.jpg)
+<img src="https://assets.leetcode.com/uploads/2021/01/04/linkedlist2.jpg" alt="img" style="zoom:50%;" />
 
 ```
 输入：head = [1,1,1,2,3]
@@ -3767,6 +3768,414 @@ class Solution {
             }
         }
         return ans;
+    }
+}
+```
+
+#### 删除给定值的叶子节点
+
+给你一棵以 root 为根的二叉树和一个整数 target ，请你删除所有值为 target 的 叶子节点 。
+
+注意，一旦删除值为 target 的叶子节点，它的父节点就可能变成叶子节点；如果新叶子节点的值恰好也是 target ，那么这个节点也应该被删除。
+
+也就是说，你需要重复此过程直到不能继续删除。
+
+ 
+
+示例 1：
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/01/16/sample_1_1684.png" alt="img" style="zoom:50%;" />
+
+```
+输入：root = [1,2,3,2,null,2,4], target = 2
+输出：[1,null,3,null,4]
+解释：
+上面左边的图中，绿色节点为叶子节点，且它们的值与 target 相同（同为 2 ），它们会被删除，得到中间的图。
+有一个新的节点变成了叶子节点且它的值与 target 相同，所以将再次进行删除，从而得到最右边的图。
+```
+示例 2：
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/01/16/sample_2_1684.png" alt="img" style="zoom:50%;" />
+
+```
+输入：root = [1,3,3,3,2], target = 3
+输出：[1,3,null,null,2]
+```
+示例 3：
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/01/16/sample_3_1684.png" alt="img" style="zoom:50%;" />
+
+```
+输入：root = [1,2,null,2,null,2], target = 2
+输出：[1]
+解释：每一步都删除一个绿色的叶子节点（值为 2）。
+```
+示例 4：
+```
+输入：root = [1,1,1], target = 1
+输出：[]
+```
+示例 5：
+```
+输入：root = [1,2,3], target = 1
+输出：[1,2,3]
+```
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode removeLeafNodes(TreeNode root, int target) {
+        if(root == null) {
+            return root;
+        }        
+        TreeNode left = removeLeafNodes(root.left, target);
+        TreeNode right = removeLeafNodes(root.right, target);
+        root.left = left;
+        root.right = right;
+        if(root.val == target && root.left == null && root.right == null) {
+            return null;
+        }
+        return root;
+    }
+}
+```
+
+#### 合并两个排序的链表
+
+输入两个递增排序的链表，合并这两个链表并使新链表中的节点仍然是递增排序的。
+
+示例1：
+```
+输入：1->2->4, 1->3->4
+输出：1->1->2->3->4->4
+```
+```
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode dummy = new ListNode(-1), cur = dummy;
+        while(l1 != null && l2 != null) {
+            if(l1.val < l2.val) {
+                cur.next = l1;
+                l1 = l1.next;
+            } else {
+                cur.next = l2;
+                l2 = l2.next;
+            }
+            cur = cur.next;
+        }
+        if(l1 != null) {
+            cur.next = l1;
+        } else {
+            cur.next = l2;
+        }
+        return dummy.next;
+    }
+}
+```
+
+#### 搜索矩阵||
+
+编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target 。该矩阵具有以下特性：
+
+每行的元素从左到右升序排列。
+每列的元素从上到下升序排列。
+
+示例 1：
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/11/25/searchgrid2.jpg" alt="img" style="zoom:50%;" />
+
+```
+输入：matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5
+输出：true
+```
+示例 2：
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/11/25/searchgrid.jpg" alt="img" style="zoom:50%;" />
+
+```
+输入：matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 20
+输出：false
+```
+
+```
+class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if(matrix == null || matrix.length == 0) {
+            return false;
+        }
+        int top = 0, right = matrix[0].length - 1;
+        while(top < matrix.length && right >= 0) {
+            int val = matrix[top][right];
+            if(val == target) {
+                return true;
+            }
+            if(val > target) {
+                --right;
+            } else {
+                ++top;
+            }
+        }
+        return false;
+    }
+}
+```
+
+#### 二叉树的完全性校验
+
+给定一个二叉树，确定它是否是一个完全二叉树。
+
+> 百度百科中对完全二叉树的定义如下：
+>
+> 若设二叉树的深度为 h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边，这就是完全二叉树。（注：第 h 层可能包含 1~ 2h 个节点。）
+
+示例 1：
+```
+输入：[1,2,3,4,5,6]
+输出：true
+解释：最后一层前的每一层都是满的（即，结点值为 {1} 和 {2,3} 的两层），且最后一层中的所有结点（{4,5,6}）都尽可能地向左。
+```
+示例 2：
+```
+输入：[1,2,3,4,5,null,7]
+输出：false
+解释：值为 7 的结点没有尽可能靠向左侧。
+```
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean isCompleteTree(TreeNode root) {
+        if(root == null) {
+            return true;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while(!queue.isEmpty()) {
+            root = queue.poll();
+            if(root == null) {
+                break;
+            }
+            queue.offer(root.left);
+            queue.offer(root.right);
+        }
+        while(!queue.isEmpty()) {
+            if(queue.poll() != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
+#### 滑动窗口的最大值
+
+给你一个整数数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+
+返回滑动窗口中的最大值。
+
+ 
+
+示例 1：
+```
+输入：nums = [1,3,-1,-3,5,3,6,7], k = 3
+输出：[3,3,5,5,6,7]
+解释：
+滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+```
+示例 2：
+```
+输入：nums = [1], k = 1
+输出：[1]
+```
+示例 3：
+```
+输入：nums = [1,-1], k = 1
+输出：[1,-1]
+```
+示例 4：
+```
+输入：nums = [9,11], k = 2
+输出：[11]
+```
+示例 5：
+```
+输入：nums = [4,-2], k = 2
+输出：[4]
+```
+```
+class Solution {
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if(nums == null || nums.length < k) {
+            return new int[0];
+        }
+        int len = nums.length;
+        int[] ans = new int[len - k + 1];
+        LinkedList<Integer> list = new LinkedList<>();
+        for(int i = 0; i < len; ++i) {
+            while(!list.isEmpty() && nums[list.peekLast()] < nums[i]) {
+                list.pollLast();
+            }
+            list.addLast(i);
+            if(i - list.peekFirst() >= k) {
+                list.pollFirst();
+            }
+            if(i - k + 1 >= 0) {
+                ans[i - k + 1] = nums[list.peekFirst()];
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### 恢复二叉搜索树
+
+给你二叉搜索树的根节点 root ，该树中的两个节点被错误地交换。请在不改变其结构的情况下，恢复这棵树。
+
+示例 1：
+```
+输入：root = [1,3,null,null,2]
+输出：[3,1,null,null,2]
+解释：3 不能是 1 左孩子，因为 3 > 1 。交换 1 和 3 使二叉搜索树有效。
+```
+示例 2：
+```
+输入：root = [3,1,4,null,null,2]
+输出：[2,1,4,null,null,3]
+解释：2 不能在 3 的右子树中，因为 2 < 3 。交换 2 和 3 使二叉搜索树有效。
+```
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    TreeNode t1, t2, pre;
+    public void recoverTree(TreeNode root) {
+        if(root == null) {
+            return ;
+        }
+        dfs(root);
+        int tmp = t1.val;
+        t1.val = t2.val;
+        t2.val = tmp;
+    }
+
+    private void dfs(TreeNode root) {
+        if(root == null) {
+            return ;
+        }
+        dfs(root.left);
+        if(pre != null && pre.val > root.val) {
+            if(t1 == null) {
+                t1 = pre;
+            }
+            t2 = root;
+        }
+        pre = root;
+        dfs(root.right);
+    }
+}
+```
+
+#### 删除排序链表中的重复元素
+
+存在一个按升序排列的链表，给你这个链表的头节点 head ，请你删除所有重复的元素，使每个元素 只出现一次 。
+
+返回同样按升序排列的结果链表。
+
+ 
+
+示例 1：
+```
+输入：head = [1,1,2]
+输出：[1,2]
+```
+示例 2：
+```
+输入：head = [1,1,2,3,3]
+输出：[1,2,3]
+```
+```
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head == null || head.next == null) {
+            return head;
+        }
+        ListNode cur = head;
+        while(cur != null && cur.next != null) {
+            if(cur.val == cur.next.val) {
+                cur.next = cur.next.next;
+            } else {
+                cur = cur.next;
+            }
+        }
+        return head;
     }
 }
 ```
